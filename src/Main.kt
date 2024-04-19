@@ -64,8 +64,6 @@ fun lzssCompress(input: String, max_dictionary:Int, max_buffer:Int): MutableList
             "0'" + buffer[0] + "'"
         }
         compressed.add(arrayOf(code))
-        //  Я так и не поняла, почему так странно отображается массив при выводе в main,
-        //  так что пусть пока так будет. Программа то правильно работает
         print("( $code ) ")
 
         val shiftSize = max(length.toDouble(), 1.0).toInt()
@@ -129,8 +127,18 @@ fun huffman(probabilities: Map<Char, Double>): Map<Char, String> {
     //я знаю, что ошибка у меня в приоретедней очереди, но я в упор не вижу как это исправить.
 
     while (priorityQueue.size > 1) {
-        val node1 = priorityQueue.poll()
-        val node2 = priorityQueue.poll()
+        var node1 = priorityQueue.poll()
+        var node2 = priorityQueue.poll()
+
+        if (node1.left == null && node1.right == null &&
+            node2.left == null && node2.right == null &&
+            node1.probability < node2.probability
+        ) {
+            val temp = node1
+            node1 = node2
+            node2 = temp
+        }
+
         val parent = Node('\u0000', node1.probability + node2.probability, node1, node2)
         priorityQueue.offer(parent)
     }
